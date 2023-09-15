@@ -34,9 +34,9 @@ class ChatAssistant:
         else:
             openai.api_key = self.config.get("Settings", "API_KEY")
 
-        # Check for MODEL in config, if not found, ask the user
+        # Check for MODEL in config, if not found, set to default 'gpt-3.5-turbo'
         if not self.config.has_option("Settings", "MODEL"):
-            self.model = self.prompt_for_model()
+            self.model = "gpt-3.5-turbo"
             self.config.set("Settings", "MODEL", self.model)
         else:
             self.model = self.config.get("Settings", "MODEL")
@@ -115,7 +115,6 @@ class ChatAssistant:
         return num_tokens
 
     async def monitor_user_input(self):
-        print(Fore.RED + "Press ENTER to interrupt the AI response...")
         await asyncio.get_event_loop().run_in_executor(None, input)
 
     async def chat_with_gpt4(self, prompt):
@@ -132,7 +131,6 @@ class ChatAssistant:
             ai_task.cancel()
             print(Fore.RED + "\nAI response interrupted by user!")
 
-            # Remove the last user message from the conversation history
             if self.conversation_history[-1]['role'] == 'user':
                 self.conversation_history.pop()
             return full_response
